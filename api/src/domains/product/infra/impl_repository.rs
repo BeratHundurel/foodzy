@@ -9,6 +9,13 @@ const FIND_ALL_PRODUCTS_QUERY: &str = r#"
     FROM products
 "#;
 
+const FIND_PRODUCTS_BY_CATEGORY_QUERY: &str = r#"
+    SELECT products.*, categories.name AS category_name
+    FROM products
+    RIGHT JOIN categories ON products.category_id = categories.id
+    WHERE category_id = $1
+"#;
+
 const FIND_PRODUCT_BY_ID_QUERY: &str = r#"
     SELECT *
     FROM products
@@ -30,5 +37,17 @@ impl ProductRepository for ProductRepo {
             .fetch_optional(&pool)
             .await?;
         Ok(product)
+    }
+
+    async fn find_by_category_id(
+        &self,
+        pool: PgPool,
+        category_id: i32,
+    ) -> Result<Vec<Product>, sqlx::Error> {
+        let products = sqlx::query_as::<_, Product>(FIND_PRODUCTS_BY_CATEGORY_QUERY)
+            .bind(category_id)
+            .fetch_all(&pool)
+            .await?;
+        Ok(products)
     }
 }

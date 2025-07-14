@@ -14,4 +14,9 @@ pub trait ProductServiceTrait: Send + Sync {
     async fn get_product_by_id(&self, id: i32) -> Result<ProductDto, AppError>;
 
     async fn get_products(&self) -> Result<Vec<ProductDto>, AppError>;
+
+    async fn get_products_by_category_id(
+        &self,
+        category_id: i32,
+    ) -> Result<Vec<ProductDto>, AppError>;
 }

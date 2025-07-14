@@ -52,4 +52,24 @@ impl ProductServiceTrait for ProductService {
             }
         }
     }
+
+    async fn get_products_by_category_id(
+        &self,
+        category_id: i32,
+    ) -> Result<Vec<ProductDto>, AppError> {
+        match self
+            .repo
+            .find_by_category_id(self.pool.clone(), category_id)
+            .await
+        {
+            Ok(products) => {
+                let product_dtos: Vec<ProductDto> = products.into_iter().map(Into::into).collect();
+                Ok(product_dtos)
+            }
+            Err(err) => {
+                tracing::error!("Error fetching products by category: {err}");
+                Err(AppError::DatabaseError(err))
+            }
+        }
+    }
 }

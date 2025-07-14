@@ -13,6 +13,7 @@ use utoipa::{
     paths(
         get_product_by_id,
         get_products,
+        get_products_by_category_id
     ),
     components(schemas(ProductDto)),
     tags(
@@ -46,4 +47,5 @@ pub fn product_routes() -> Router<AppState> {
     Router::new()
         .route("/", get(get_products))
         .route("/{id}", get(get_product_by_id))
+        .route("/category/{category_id}", get(get_products_by_category_id))
 }

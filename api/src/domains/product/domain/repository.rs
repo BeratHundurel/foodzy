@@ -8,4 +8,10 @@ pub trait ProductRepository: Send + Sync {
     async fn find_all(&self, pool: PgPool) -> Result<Vec<Product>, sqlx::Error>;
 
     async fn find_by_id(&self, pool: PgPool, id: i32) -> Result<Option<Product>, sqlx::Error>;
+
+    async fn find_by_category_id(
+        &self,
+        pool: PgPool,
+        category_id: i32,
+    ) -> Result<Vec<Product>, sqlx::Error>;
 }

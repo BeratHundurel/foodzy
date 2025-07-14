@@ -1,5 +1,6 @@
 use bigdecimal::BigDecimal;
 use sqlx::prelude::FromRow;
+
 #[derive(Debug, Clone, FromRow)]
 pub struct Product {
     pub id: i32,
@@ -10,4 +11,6 @@ pub struct Product {
     pub isdealoftheday: bool,
     pub discount: BigDecimal,
     pub category_id: i32,
+    pub category_name: String,
+    
 }

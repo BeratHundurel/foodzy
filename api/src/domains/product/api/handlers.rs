@@ -30,3 +30,21 @@ pub async fn get_products(State(state): State<AppState>) -> Result<impl IntoResp
     let products = state.product_service.get_products().await?;
     Ok(RestApiResponse::success(products))
 }
+
+#[utoipa::path(
+    get,
+    path = "/product/category/{category_id}",
+    responses((status = 200, description = "Get products by category ID", body = [ProductDto])),
+    tag = "Products"
+)]
+pub async fn get_products_by_category_id(
+    State(state): State<AppState>,
+    axum::extract::Path(category_id): axum::extract::Path<String>,
+) -> Result<impl IntoResponse, AppError> {
+    let category_id: i32 = category_id.parse().map_err(|_| AppError::InternalError)?;
+    let products = state
+        .product_service
+        .get_products_by_category_id(category_id)
+        .await?;
+    Ok(RestApiResponse::success(products))
+}

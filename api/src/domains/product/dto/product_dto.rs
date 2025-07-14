@@ -13,6 +13,7 @@ pub struct ProductDto {
     pub isdealoftheday: bool,
     pub discount: String,
     pub category_id: i32,
+    pub category_name: Option<String>,
 }
 
 impl From<Product> for ProductDto {
@@ -26,6 +27,7 @@ impl From<Product> for ProductDto {
             isdealoftheday: user.isdealoftheday,
             discount: user.discount.to_string(),
             category_id: user.category_id,
+            category_name: Some(user.category_name),
         }
     }
 }
