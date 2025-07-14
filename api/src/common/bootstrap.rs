@@ -4,6 +4,7 @@ use sqlx::PgPool;
 
 use crate::common::config::Config;
 use crate::domains::auth::{AuthService, AuthServiceTrait};
+use crate::domains::category::{CategoryService, CategoryServiceTrait};
 use crate::domains::product::{ProductService, ProductServiceTrait};
 use crate::domains::user::UserServiceTrait;
 use crate::{common::app_state::AppState, domains::user::UserService};
@@ -19,7 +20,16 @@ pub fn build_app_state(pool: PgPool, config: Config) -> AppState {
     let product_service: Arc<dyn ProductServiceTrait> =
         ProductService::create_service(pool.clone());
 
-    AppState::new(config, auth_service, user_service, product_service)
+    let category_service: Arc<dyn CategoryServiceTrait> =
+        CategoryService::create_service(pool.clone());
+
+    AppState::new(
+        config,
+        auth_service,
+        user_service,
+        product_service,
+        category_service,
+    )
 }
 
 /// Setup tracing for the application.

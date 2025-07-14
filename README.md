@@ -10,8 +10,6 @@
 
 ## 📦 Project Structure
 
-Recommended layout:
-
 ```text
 ├── src/
 │   ├── main.rs                         # Application entry point
@@ -46,7 +44,6 @@ Recommended layout:
 │   │   │       └── impl_service.rs
 │   │   ├── <feature>.rs                 # Module entry point
 ├── .env                                # Environment variables for local development
-├── .env.test                           # Environment overrides for test environment
 ```
 
 ### Prerequisites

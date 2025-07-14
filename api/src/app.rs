@@ -30,6 +30,7 @@ use crate::{
     },
     domains::{
         auth::{user_auth_routes, UserAuthApiDoc},
+        category::{category_routes, CategoryApiDoc},
         product::{product_routes, ProductApiDoc},
         user::{user_private_routes, user_public_routes, UserPrivateApiDoc, UserPublicApiDoc},
     },
@@ -57,6 +58,7 @@ fn create_swagger_ui() -> SwaggerUi {
             "/api-docs/user-auth/openapi.json",
             UserAuthApiDoc::openapi(),
         )
+        .url("/api-docs/category/openapi.json", CategoryApiDoc::openapi())
         .url("/api-docs/product/openapi.json", ProductApiDoc::openapi())
 }
 
@@ -83,6 +85,7 @@ pub fn create_router(state: AppState) -> Router {
     let protected_routes = Router::new()
         .nest("/user", user_private_routes())
         .nest("/product", product_routes())
+        .nest("/category", category_routes())
         // by default, Multipart limits to 2MB; override with `asset_max_size`
         // See https://docs.rs/axum/latest/axum/extract/struct.Multipart.html
         .layer(DefaultBodyLimit::max(state.config.asset_max_size))
