@@ -6,7 +6,6 @@ use std::sync::Arc;
 
 #[async_trait]
 pub trait ProductServiceTrait: Send + Sync {
-    /// constructor for the service.
     fn create_service(pool: PgPool) -> Arc<dyn ProductServiceTrait>
     where
         Self: Sized;
@@ -19,4 +18,8 @@ pub trait ProductServiceTrait: Send + Sync {
         &self,
         category_id: i32,
     ) -> Result<Vec<ProductDto>, AppError>;
+
+    async fn get_best_sellers(&self, limit: i64) -> Result<Vec<ProductDto>, AppError>;
+
+    async fn get_deals_of_the_day(&self, limit: i64) -> Result<Vec<ProductDto>, AppError>;
 }

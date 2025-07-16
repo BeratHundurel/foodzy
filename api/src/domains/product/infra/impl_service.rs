@@ -72,4 +72,34 @@ impl ProductServiceTrait for ProductService {
             }
         }
     }
+
+    async fn get_best_sellers(&self, limit: i64) -> Result<Vec<ProductDto>, AppError> {
+        match self.repo.find_best_sellers(self.pool.clone(), limit).await {
+            Ok(products) => {
+                let product_dtos: Vec<ProductDto> = products.into_iter().map(Into::into).collect();
+                Ok(product_dtos)
+            }
+            Err(err) => {
+                tracing::error!("Error fetching best sellers: {err}");
+                Err(AppError::DatabaseError(err))
+            }
+        }
+    }
+
+    async fn get_deals_of_the_day(&self, limit: i64) -> Result<Vec<ProductDto>, AppError> {
+        match self
+            .repo
+            .find_deals_of_the_day(self.pool.clone(), limit)
+            .await
+        {
+            Ok(products) => {
+                let product_dtos: Vec<ProductDto> = products.into_iter().map(Into::into).collect();
+                Ok(product_dtos)
+            }
+            Err(err) => {
+                tracing::error!("Error fetching deals of the day: {err}");
+                Err(AppError::DatabaseError(err))
+            }
+        }
+    }
 }

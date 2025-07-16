@@ -7,7 +7,7 @@ use crate::{
 };
 
 use axum::{
-    extract::{Multipart, State},
+    extract::{Multipart, Path, State},
     response::IntoResponse,
     Json,
 };
@@ -22,7 +22,7 @@ use validator::Validate;
 )]
 pub async fn get_user_by_id(
     State(state): State<AppState>,
-    axum::extract::Path(id): axum::extract::Path<String>,
+    Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
     let user = state.user_service.get_user_by_id(id).await?;
     Ok(RestApiResponse::success(user))
@@ -102,7 +102,7 @@ pub async fn create_user(
 )]
 pub async fn update_user(
     State(state): State<AppState>,
-    axum::extract::Path(id): axum::extract::Path<String>,
+    Path(id): Path<String>,
     Json(payload): Json<UpdateUserDto>,
 ) -> Result<impl IntoResponse, AppError> {
     payload.validate().map_err(|err| {
@@ -122,7 +122,7 @@ pub async fn update_user(
 )]
 pub async fn delete_user(
     State(state): State<AppState>,
-    axum::extract::Path(id): axum::extract::Path<String>,
+    Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
     let message = state.user_service.delete_user(id).await?;
     Ok(RestApiResponse::success_with_message(message, ()))

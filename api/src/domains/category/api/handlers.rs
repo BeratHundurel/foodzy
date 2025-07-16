@@ -3,7 +3,10 @@ use crate::{
     domains::category::dto::category_dto::CategoryDto,
 };
 
-use axum::{extract::State, response::IntoResponse};
+use axum::{
+    extract::{Path, State},
+    response::IntoResponse,
+};
 
 #[utoipa::path(
     get,
@@ -13,7 +16,7 @@ use axum::{extract::State, response::IntoResponse};
 )]
 pub async fn get_category_by_id(
     State(state): State<AppState>,
-    axum::extract::Path(id): axum::extract::Path<String>,
+    Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
     let id: i32 = id.parse().map_err(|_| AppError::InternalError)?;
     let product = state.category_service.get_category_by_id(id).await?;

@@ -1,3 +1,5 @@
+use crate::domains::product::domain::model::ProductWithCategory;
+
 use super::model::Product;
 
 use async_trait::async_trait;
@@ -13,5 +15,17 @@ pub trait ProductRepository: Send + Sync {
         &self,
         pool: PgPool,
         category_id: i32,
+    ) -> Result<Vec<ProductWithCategory>, sqlx::Error>;
+
+    async fn find_best_sellers(
+        &self,
+        pool: PgPool,
+        limit: i64,
+    ) -> Result<Vec<Product>, sqlx::Error>;
+
+    async fn find_deals_of_the_day(
+        &self,
+        pool: PgPool,
+        limit: i64,
     ) -> Result<Vec<Product>, sqlx::Error>;
 }
