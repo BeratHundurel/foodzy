@@ -22,16 +22,16 @@ pub struct ProductDto {
 }
 
 impl From<Product> for ProductDto {
-    fn from(user: Product) -> Self {
+    fn from(product: Product) -> Self {
         Self {
-            id: user.id,
-            name: user.name,
-            description: user.description,
-            price: user.price.to_string(),
-            isbestseller: user.isbestseller,
-            isdealoftheday: user.isdealoftheday,
-            discount: user.discount.to_string(),
-            category_id: user.category_id,
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            price: product.price.to_string(),
+            isbestseller: product.isbestseller,
+            isdealoftheday: product.isdealoftheday,
+            discount: product.discount.to_string(),
+            category_id: product.category_id,
             category_name: None,
         }
     }

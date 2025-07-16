@@ -10,9 +10,6 @@ use async_trait::async_trait;
 use sqlx::PgPool;
 use std::sync::Arc;
 
-/// Service struct for handling user-related operations
-/// such as creating, updating, deleting, and fetching users.
-/// It uses a repository pattern to abstract the data access layer.
 #[derive(Clone)]
 pub struct ProductService {
     pub pool: PgPool,
