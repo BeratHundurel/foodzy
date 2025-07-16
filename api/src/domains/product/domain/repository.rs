@@ -3,6 +3,7 @@ use crate::domains::product::domain::model::ProductWithCategory;
 use super::model::Product;
 
 use async_trait::async_trait;
+use bigdecimal::BigDecimal;
 use sqlx::PgPool;
 
 #[async_trait]
@@ -27,5 +28,12 @@ pub trait ProductRepository: Send + Sync {
         &self,
         pool: PgPool,
         limit: i64,
+    ) -> Result<Vec<Product>, sqlx::Error>;
+
+    async fn find_by_price_range(
+        &self,
+        pool: PgPool,
+        min_price: BigDecimal,
+        max_price: BigDecimal,
     ) -> Result<Vec<Product>, sqlx::Error>;
 }

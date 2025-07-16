@@ -3,9 +3,17 @@ use utoipa::ToSchema;
 
 use crate::domains::product::domain::model::{Product, ProductWithCategory};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, ToSchema)]
 pub struct BestSellerQuery {
     pub limit: Option<i64>,
+}
+
+#[derive(Deserialize, ToSchema)]
+pub struct PriceRangeQuery {
+    #[schema(example = "10.5")]
+    pub min_price: String,
+    #[schema(example = "50.0")]
+    pub max_price: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]

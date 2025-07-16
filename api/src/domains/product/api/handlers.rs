@@ -1,12 +1,13 @@
 use crate::{
     common::{app_state::AppState, dto::RestApiResponse, error::AppError},
-    domains::product::dto::product_dto::{BestSellerQuery, ProductDto},
+    domains::product::dto::product_dto::{BestSellerQuery, PriceRangeQuery, ProductDto},
 };
 
 use axum::{
     extract::{Path, Query, State},
     response::IntoResponse,
 };
+use bigdecimal::BigDecimal;
 
 #[utoipa::path(
     get,
@@ -70,7 +71,12 @@ pub async fn get_best_sellers(
 #[utoipa::path(
     get,
     path = "/product/deal-of-the-day",
-    responses((status = 200, description = "Get deals of the day", body = [ProductDto])),
+    params(
+        ("limit" = Option<i32>, Query, description = "Maximum number of products to return")
+    ),
+    responses(
+        (status = 200, description = "Get deals of the day", body = [ProductDto])
+    ),
     tag = "Products"
 )]
 pub async fn get_deals_of_the_day(
@@ -82,3 +88,33 @@ pub async fn get_deals_of_the_day(
     Ok(RestApiResponse::success(products))
 }
 
+#[utoipa::path(
+    get,
+    path = "/product/price-range",
+    params(
+        ("min_price" = String, Query, description = "Minimum price"),
+        ("max_price" = String, Query, description = "Maximum price")
+    ),
+    responses((status = 200, description = "Get products by price range", body = [ProductDto])),
+    tag = "Products"
+)]
+pub async fn get_products_by_price_range(
+    State(state): State<AppState>,
+    Query(query): Query<PriceRangeQuery>,
+) -> Result<impl IntoResponse, AppError> {
+    let min_price: BigDecimal = query
+        .min_price
+        .parse()
+        .map_err(|_| AppError::InternalError)?;
+    let max_price: BigDecimal = query
+        .max_price
+        .parse()
+        .map_err(|_| AppError::InternalError)?;
+
+    let products = state
+        .product_service
+        .get_products_by_price_range(min_price, max_price)
+        .await?;
+
+    Ok(RestApiResponse::success(products))
+}

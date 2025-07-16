@@ -3,6 +3,7 @@ use crate::domains::product::domain::{
     repository::ProductRepository,
 };
 use async_trait::async_trait;
+use bigdecimal::BigDecimal;
 use sqlx::PgPool;
 
 pub struct ProductRepo;
@@ -92,6 +93,27 @@ impl ProductRepository for ProductRepo {
             LIMIT $1
             "#,
             limit
+        )
+        .fetch_all(&pool)
+        .await?;
+        Ok(products)
+    }
+
+    async fn find_by_price_range(
+        &self,
+        pool: PgPool,
+        min_price: BigDecimal,
+        max_price: BigDecimal,
+    ) -> Result<Vec<Product>, sqlx::Error> {
+        let products = sqlx::query_as!(
+            Product,
+            r#"
+            SELECT id, name, description, price, isbestseller, isdealoftheday, discount, category_id
+            FROM products
+            WHERE price BETWEEN $1 AND $2
+            "#,
+            min_price,
+            max_price
         )
         .fetch_all(&pool)
         .await?;

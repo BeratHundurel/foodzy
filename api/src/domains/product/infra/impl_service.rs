@@ -7,6 +7,7 @@ use crate::{
     },
 };
 use async_trait::async_trait;
+use bigdecimal::BigDecimal;
 use sqlx::PgPool;
 use std::sync::Arc;
 
@@ -95,6 +96,27 @@ impl ProductServiceTrait for ProductService {
             }
             Err(err) => {
                 tracing::error!("Error fetching deals of the day: {err}");
+                Err(AppError::DatabaseError(err))
+            }
+        }
+    }
+
+    async fn get_products_by_price_range(
+        &self,
+        min_price: BigDecimal,
+        max_price: BigDecimal,
+    ) -> Result<Vec<ProductDto>, AppError> {
+        match self
+            .repo
+            .find_by_price_range(self.pool.clone(), min_price, max_price)
+            .await
+        {
+            Ok(products) => {
+                let product_dtos: Vec<ProductDto> = products.into_iter().map(Into::into).collect();
+                Ok(product_dtos)
+            }
+            Err(err) => {
+                tracing::error!("Error fetching products by price range: {err}");
                 Err(AppError::DatabaseError(err))
             }
         }

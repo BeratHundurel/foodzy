@@ -1,6 +1,7 @@
 use crate::{common::error::AppError, domains::product::dto::product_dto::ProductDto};
 
 use async_trait::async_trait;
+use bigdecimal::BigDecimal;
 use sqlx::PgPool;
 use std::sync::Arc;
 
@@ -22,4 +23,10 @@ pub trait ProductServiceTrait: Send + Sync {
     async fn get_best_sellers(&self, limit: i64) -> Result<Vec<ProductDto>, AppError>;
 
     async fn get_deals_of_the_day(&self, limit: i64) -> Result<Vec<ProductDto>, AppError>;
+
+    async fn get_products_by_price_range(
+        &self,
+        min_price: BigDecimal,
+        max_price: BigDecimal,
+    ) -> Result<Vec<ProductDto>, AppError>;
 }
