@@ -36,4 +36,5 @@ pub trait ProductRepository: Send + Sync {
         min_price: BigDecimal,
         max_price: BigDecimal,
     ) -> Result<Vec<Product>, sqlx::Error>;
+
 }

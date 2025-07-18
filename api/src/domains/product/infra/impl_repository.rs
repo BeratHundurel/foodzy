@@ -14,7 +14,7 @@ impl ProductRepository for ProductRepo {
         let products = sqlx::query_as!(
             Product,
             r#"
-            SELECT id, name, description, price, isbestseller, isdealoftheday, discount, category_id
+            SELECT id, name, description, price, is_best_seller, is_deal_of_the_day, discount, category_id
             FROM products
             "#
         )
@@ -27,7 +27,7 @@ impl ProductRepository for ProductRepo {
         let product = sqlx::query_as!(
             Product,
             r#"
-            SELECT id, name, description, price, isbestseller, isdealoftheday, discount, category_id
+            SELECT id, name, description, price, is_best_seller, is_deal_of_the_day, discount, category_id
             FROM products
             WHERE id = $1
             "#,
@@ -46,7 +46,7 @@ impl ProductRepository for ProductRepo {
         let products = sqlx::query_as!(
             ProductWithCategory,
             r#"
-            SELECT p.id, p.name, p.description, p.price, p.isbestseller, p.isdealoftheday, 
+            SELECT p.id, p.name, p.description, p.price, p.is_best_seller, p.is_deal_of_the_day, 
                    p.discount, p.category_id, c.name as category_name
             FROM products p
             INNER JOIN categories c ON p.category_id = c.id
@@ -67,9 +67,9 @@ impl ProductRepository for ProductRepo {
         let products = sqlx::query_as!(
             Product,
             r#"
-            SELECT id, name, description, price, isbestseller, isdealoftheday, discount, category_id
+            SELECT id, name, description, price, is_best_seller, is_deal_of_the_day, discount, category_id
             FROM products
-            WHERE isbestseller = true
+            WHERE is_best_seller = true
             LIMIT $1
             "#,
             limit
@@ -87,9 +87,9 @@ impl ProductRepository for ProductRepo {
         let products = sqlx::query_as!(
             Product,
             r#"
-            SELECT id, name, description, price, isbestseller, isdealoftheday, discount, category_id
+            SELECT id, name, description, price, is_best_seller, is_deal_of_the_day, discount, category_id
             FROM products
-            WHERE isdealoftheday = true
+            WHERE is_deal_of_the_day = true
             LIMIT $1
             "#,
             limit
@@ -108,7 +108,7 @@ impl ProductRepository for ProductRepo {
         let products = sqlx::query_as!(
             Product,
             r#"
-            SELECT id, name, description, price, isbestseller, isdealoftheday, discount, category_id
+            SELECT id, name, description, price, is_best_seller, is_deal_of_the_day, discount, category_id
             FROM products
             WHERE price BETWEEN $1 AND $2
             "#,

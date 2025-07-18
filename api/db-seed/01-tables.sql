@@ -39,8 +39,8 @@ create table products (
     name varchar(64) not null unique,
     description text not null,
     price decimal(10, 2) not null check (price >= 0),
-    isbestseller boolean not null default false,
-    isdealoftheday boolean not null default false,
+    is_best_seller boolean not null default false,
+    is_deal_of_the_day boolean not null default false,
     discount decimal(5, 2) not null default 0 check (
         discount >= 0
         and discount <= 100
