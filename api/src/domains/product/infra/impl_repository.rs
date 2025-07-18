@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::domains::product::domain::{
     model::{Product, ProductWithCategory},
     repository::ProductRepository,
@@ -117,6 +119,57 @@ impl ProductRepository for ProductRepo {
         )
         .fetch_all(&pool)
         .await?;
+        Ok(products)
+    }
+
+    async fn find_by_filter(
+        &self,
+        pool: PgPool,
+        category: Option<String>,
+        is_best_seller: Option<bool>,
+        is_deal_of_the_day: Option<bool>,
+        min_price: Option<String>,
+        max_price: Option<String>,
+    ) -> Result<Vec<ProductWithCategory>, sqlx::Error> {
+        let mut query_builder = sqlx::QueryBuilder::new(
+            "SELECT p.id, p.name, p.description, p.price, p.is_best_seller, p.is_deal_of_the_day, 
+                    p.discount, p.category_id, c.name as category_name
+             FROM products p
+             INNER JOIN categories c ON p.category_id = c.id
+             WHERE 1=1",
+        );
+
+        if let Some(cat) = &category {
+            query_builder.push(" AND c.name ILIKE ");
+            query_builder.push_bind(format!("%{}%", cat));
+        }
+        if let Some(best_seller) = is_best_seller {
+            query_builder.push(" AND p.is_best_seller = ");
+            query_builder.push_bind(best_seller);
+        }
+        if let Some(deal_of_the_day) = is_deal_of_the_day {
+            query_builder.push(" AND p.is_deal_of_the_day = ");
+            query_builder.push_bind(deal_of_the_day);
+        }
+        if let Some(min) = &min_price {
+            // Convert min_price to BigDecimal, only add filter if conversion succeeds
+            if let Ok(min_val) = BigDecimal::from_str(min) {
+                query_builder.push(" AND p.price >= ");
+                query_builder.push_bind(min_val);
+            }
+        }
+        if let Some(max) = &max_price {
+            if let Ok(max_val) = BigDecimal::from_str(max) {
+                query_builder.push(" AND p.price <= ");
+                query_builder.push_bind(max_val);
+            }
+        }
+
+        let products = query_builder
+            .build_query_as::<ProductWithCategory>()
+            .fetch_all(&pool)
+            .await?;
+
         Ok(products)
     }
 }

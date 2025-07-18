@@ -37,4 +37,14 @@ pub trait ProductRepository: Send + Sync {
         max_price: BigDecimal,
     ) -> Result<Vec<Product>, sqlx::Error>;
 
+    async fn find_by_filter(
+        &self,
+        pool: PgPool,
+        category: Option<String>,
+        is_best_seller: Option<bool>,
+        is_deal_of_the_day: Option<bool>,
+        min_price: Option<String>,
+        max_price: Option<String>,
+    ) -> Result<Vec<ProductWithCategory>, sqlx::Error>;
+
 }

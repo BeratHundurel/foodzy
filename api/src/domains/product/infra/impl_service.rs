@@ -121,4 +121,35 @@ impl ProductServiceTrait for ProductService {
             }
         }
     }
+
+    async fn get_products_by_filter(
+        &self,
+        category: Option<String>,
+        is_best_seller: Option<bool>,
+        is_deal_of_the_day: Option<bool>,
+        min_price: Option<String>,
+        max_price: Option<String>,
+    ) -> Result<Vec<ProductDto>, AppError> {
+        match self
+            .repo
+            .find_by_filter(
+                self.pool.clone(),
+                category,
+                is_best_seller,
+                is_deal_of_the_day,
+                min_price,
+                max_price,
+            )
+            .await
+        {
+            Ok(products) => {
+                let product_dtos: Vec<ProductDto> = products.into_iter().map(Into::into).collect();
+                Ok(product_dtos)
+            }
+            Err(err) => {
+                tracing::error!("Error fetching products by filter: {err}");
+                Err(AppError::DatabaseError(err))
+            }
+        }
+    }
 }

@@ -1,6 +1,8 @@
 use crate::{
     common::{app_state::AppState, dto::RestApiResponse, error::AppError},
-    domains::product::dto::product_dto::{BestSellerQuery, PriceRangeQuery, ProductDto},
+    domains::product::dto::product_dto::{
+        BestSellerQuery, FilterQuery, PriceRangeQuery, ProductDto,
+    },
 };
 
 use axum::{
@@ -114,6 +116,37 @@ pub async fn get_products_by_price_range(
     let products = state
         .product_service
         .get_products_by_price_range(min_price, max_price)
+        .await?;
+
+    Ok(RestApiResponse::success(products))
+}
+
+#[utoipa::path(
+    get,
+    path = "/product/filter",
+    params(
+        ("category" = Option<String>, Query, description = "Filter by category"),
+        ("is_best_seller" = Option<bool>, Query, description = "Filter by best seller status"),
+        ("is_deal_of_the_day" = Option<bool>, Query, description = "Filter by deal of the day status"),
+        ("min_price" = Option<String>, Query, description = "Minimum price"),
+        ("max_price" = Option<String>, Query, description = "Maximum price")
+    ),
+    responses((status = 200, description = "Get products by filter", body = [ProductDto])),
+    tag = "Products"
+)]
+pub async fn get_products_by_filter(
+    State(state): State<AppState>,
+    Query(query): Query<FilterQuery>,
+) -> Result<impl IntoResponse, AppError> {
+    let products = state
+        .product_service
+        .get_products_by_filter(
+            query.category,
+            query.is_best_seller,
+            query.is_deal_of_the_day,
+            query.min_price,
+            query.max_price,
+        )
         .await?;
 
     Ok(RestApiResponse::success(products))

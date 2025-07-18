@@ -29,4 +29,13 @@ pub trait ProductServiceTrait: Send + Sync {
         min_price: BigDecimal,
         max_price: BigDecimal,
     ) -> Result<Vec<ProductDto>, AppError>;
+
+    async fn get_products_by_filter(
+        &self,
+        category: Option<String>,
+        is_best_seller: Option<bool>,
+        is_deal_of_the_day: Option<bool>,
+        min_price: Option<String>,
+        max_price: Option<String>,
+    ) -> Result<Vec<ProductDto>, AppError>;
 }
